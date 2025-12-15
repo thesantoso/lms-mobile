@@ -1,0 +1,10 @@
+// TODO: Create SchoolSettingsService to fetch school-specific configuration from API
+// This service should provide:
+// - School location coordinates for geofencing
+// - School-specific settings and configurations
+// - Cache settings locally for offline access
+//
+// Example usage:
+// final settings = await SchoolSettingsService().getSchoolSettings(schoolId);
+// final schoolLat = settings.latitude;
+// final schoolLng = settings.longitude;

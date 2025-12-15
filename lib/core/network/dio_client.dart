@@ -85,7 +85,7 @@ class DioClient {
     try {
       return await _dio.get(path, queryParameters: queryParameters);
     } on DioException catch (e) {
-      _onError(e, ErrorInterceptorHandler());
+      _handleDioException(e);
       rethrow;
     }
   }
@@ -102,7 +102,7 @@ class DioClient {
         queryParameters: queryParameters,
       );
     } on DioException catch (e) {
-      _onError(e, ErrorInterceptorHandler());
+      _handleDioException(e);
       rethrow;
     }
   }
@@ -119,7 +119,7 @@ class DioClient {
         queryParameters: queryParameters,
       );
     } on DioException catch (e) {
-      _onError(e, ErrorInterceptorHandler());
+      _handleDioException(e);
       rethrow;
     }
   }
@@ -131,8 +131,23 @@ class DioClient {
     try {
       return await _dio.delete(path, queryParameters: queryParameters);
     } on DioException catch (e) {
-      _onError(e, ErrorInterceptorHandler());
+      _handleDioException(e);
       rethrow;
+    }
+  }
+  
+  void _handleDioException(DioException error) {
+    switch (error.type) {
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.sendTimeout:
+      case DioExceptionType.receiveTimeout:
+        throw NetworkException('Connection timeout');
+      case DioExceptionType.badResponse:
+        _handleStatusCode(error.response?.statusCode);
+      case DioExceptionType.cancel:
+        throw NetworkException('Request cancelled');
+      default:
+        throw NetworkException('Network error occurred');
     }
   }
 }

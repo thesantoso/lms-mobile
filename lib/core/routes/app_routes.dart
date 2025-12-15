@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
+import '../../features/auth/presentation/controllers/auth_controller.dart';
 import '../../features/attendance/presentation/pages/mark_attendance_page.dart';
 import '../constants/app_constants.dart';
 import 'bindings.dart';
@@ -104,8 +106,6 @@ class RoleMiddleware extends GetMiddleware {
 }
 
 // Placeholder home pages
-import 'package:flutter/material.dart';
-import '../../features/auth/presentation/controllers/auth_controller.dart';
 
 class StudentHomePage extends GetView<AuthController> {
   const StudentHomePage({super.key});

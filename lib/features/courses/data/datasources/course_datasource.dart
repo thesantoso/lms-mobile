@@ -69,19 +69,27 @@ class CourseRemoteDataSourceImpl implements CourseRemoteDataSource {
     required String filePath,
     required MaterialType type,
   }) async {
-    final formData = FormData.fromMap({
-      'courseId': courseId,
-      'title': title,
-      'description': description,
-      'type': type.name,
-      'file': await MultipartFile.fromFile(filePath),
-    });
-    
-    final response = await client.post(
-      ApiEndpoints.materials,
-      data: formData,
-    );
-    
-    return MaterialModel.fromJson(response.data as Map<String, dynamic>);
+    try {
+      final formData = FormData.fromMap({
+        'courseId': courseId,
+        'title': title,
+        'description': description,
+        'type': type.name,
+        'file': await MultipartFile.fromFile(filePath),
+      });
+      
+      final response = await client.post(
+        ApiEndpoints.materials,
+        data: formData,
+      );
+      
+      return MaterialModel.fromJson(response.data as Map<String, dynamic>);
+    } catch (e) {
+      if (e.toString().contains('FileSystemException') ||
+          e.toString().contains('No such file')) {
+        throw Exception('File not found or cannot be read: $filePath');
+      }
+      rethrow;
+    }
   }
 }
