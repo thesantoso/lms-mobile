@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import '../../../../core/routes/app_routes.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/usecases/auth_usecases.dart';
 
@@ -75,16 +76,16 @@ class AuthController extends GetxController {
   void _navigateBasedOnRole(User user) {
     switch (user.role) {
       case UserRole.student:
-        Get.offAllNamed('/student/home');
+        Get.offAllNamed(AppRoutes.studentHome);
         break;
       case UserRole.teacher:
-        Get.offAllNamed('/teacher/home');
+        Get.offAllNamed(AppRoutes.teacherHome);
         break;
       case UserRole.parent:
-        Get.offAllNamed('/parent/home');
+        Get.offAllNamed(AppRoutes.parentHome);
         break;
       case UserRole.admin:
-        Get.offAllNamed('/admin/home');
+        Get.offAllNamed(AppRoutes.adminHome);
         break;
     }
   }
@@ -93,7 +94,7 @@ class AuthController extends GetxController {
     try {
       await logoutUseCase();
       _currentUser.value = null;
-      Get.offAllNamed('/login');
+      Get.offAllNamed(AppRoutes.login);
     } catch (e) {
       Get.snackbar(
         'Logout Failed',

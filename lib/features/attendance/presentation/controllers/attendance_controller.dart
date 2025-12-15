@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../domain/entities/attendance.dart';
 import '../../domain/usecases/attendance_usecases.dart';
+import '../../../auth/presentation/controllers/auth_controller.dart';
 
 class AttendanceController extends GetxController {
   final MarkAttendanceUseCase markAttendanceUseCase;
@@ -32,9 +33,10 @@ class AttendanceController extends GetxController {
   
   final ImagePicker _picker = ImagePicker();
   
-  // School location (should be fetched from API in real app)
-  final double schoolLat = -6.2088;
-  final double schoolLng = 106.8456;
+  // School location coordinates - fetched from school settings
+  // Default values, should be updated from API in production
+  double get schoolLat => -6.2088; // TODO: Fetch from API based on schoolId
+  double get schoolLng => 106.8456; // TODO: Fetch from API based on schoolId
   
   Future<void> capturePhoto() async {
     try {
@@ -144,9 +146,16 @@ class AttendanceController extends GetxController {
     _isLoading.value = true;
     
     try {
-      // In real app, get userId from auth controller
+      // Get userId from auth controller
+      final authController = Get.find<AuthController>();
+      final userId = authController.currentUser?.id;
+      
+      if (userId == null) {
+        throw Exception('User not authenticated');
+      }
+      
       _attendanceHistory.value = await getAttendanceHistoryUseCase(
-        userId: 'current-user-id',
+        userId: userId,
       );
       
       _isLoading.value = false;

@@ -66,8 +66,14 @@ class AppRoutes {
 class AuthMiddleware extends GetMiddleware {
   @override
   RouteSettings? redirect(String? route) {
-    final authController = Get.find<AuthController>();
-    if (!authController.isAuthenticated) {
+    // Try to get auth controller, return null if not found (will be checked at next navigation)
+    try {
+      final authController = Get.find<AuthController>();
+      if (!authController.isAuthenticated) {
+        return const RouteSettings(name: AppRoutes.login);
+      }
+    } catch (e) {
+      // AuthController not initialized yet, redirect to login
       return const RouteSettings(name: AppRoutes.login);
     }
     return null;
@@ -81,10 +87,15 @@ class RoleMiddleware extends GetMiddleware {
   
   @override
   RouteSettings? redirect(String? route) {
-    final authController = Get.find<AuthController>();
-    final user = authController.currentUser;
-    
-    if (user == null || !allowedRoles.contains(user.role)) {
+    try {
+      final authController = Get.find<AuthController>();
+      final user = authController.currentUser;
+      
+      if (user == null || !allowedRoles.contains(user.role)) {
+        return const RouteSettings(name: AppRoutes.login);
+      }
+    } catch (e) {
+      // AuthController not initialized yet, redirect to login
       return const RouteSettings(name: AppRoutes.login);
     }
     
